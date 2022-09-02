@@ -1,0 +1,54 @@
+diff --git a/node_modules/expo-updates/ios/EXUpdates.podspec b/node_modules/expo-updates/ios/EXUpdates.podspec
+index b2ad346..ad07ae6 100644
+--- a/node_modules/expo-updates/ios/EXUpdates.podspec
++++ b/node_modules/expo-updates/ios/EXUpdates.podspec
+@@ -30,7 +30,10 @@ Pod::Spec.new do |s|
+     'SWIFT_COMPILATION_MODE' => 'wholemodule'
+   }
+ 
+-  if !$ExpoUseSources&.include?(package['name']) && ENV['EXPO_USE_SOURCE'].to_i == 0 && File.exist?("#{s.name}.xcframework") && Gem::Version.new(Pod::VERSION) >= Gem::Version.new('1.10.0')
++  #ex_updates_native_debug = ENV['EX_UPDATES_NATIVE_DEBUG'] == '1'
++  ex_updates_native_debug = true
++
++  if !ex_updates_native_debug && !$ExpoUseSources&.include?(package['name']) && ENV['EXPO_USE_SOURCE'].to_i == 0 && File.exist?("#{s.name}.xcframework") && Gem::Version.new(Pod::VERSION) >= Gem::Version.new('1.10.0')
+     s.source_files = "#{s.name}/**/*.h"
+     s.vendored_frameworks = "#{s.name}.xcframework"
+   else
+@@ -38,9 +41,10 @@ Pod::Spec.new do |s|
+   end
+ 
+   if $expo_updates_create_manifest != false
++    force_bundling_flag = ex_updates_native_debug ? "export FORCE_BUNDLING=1\n" : ""
+     s.script_phase = {
+       :name => 'Generate app.manifest for expo-updates',
+-      :script => 'bash -l -c "$PODS_TARGET_SRCROOT/../scripts/create-manifest-ios.sh"',
++      :script => force_bundling_flag + 'bash -l -c "$PODS_TARGET_SRCROOT/../scripts/create-manifest-ios.sh"',
+       :execution_position => :before_compile
+     }
+ 
+diff --git a/node_modules/expo-updates/ios/EXUpdates/ReactDelegateHandler/ExpoUpdatesAppDelegateSubscriber.swift b/node_modules/expo-updates/ios/EXUpdates/ReactDelegateHandler/ExpoUpdatesAppDelegateSubscriber.swift
+index 395b126..aa24ce1 100644
+--- a/node_modules/expo-updates/ios/EXUpdates/ReactDelegateHandler/ExpoUpdatesAppDelegateSubscriber.swift
++++ b/node_modules/expo-updates/ios/EXUpdates/ReactDelegateHandler/ExpoUpdatesAppDelegateSubscriber.swift
+@@ -5,7 +5,7 @@ import EXUpdatesInterface
+ 
+ public class ExpoUpdatesAppDelegateSubscriber: ExpoAppDelegateSubscriber {
+   public func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+-    if EXAppDefines.APP_DEBUG {
++    if (EXAppDefines.APP_DEBUG && !EXAppDefines.APP_UPDATES_DEBUG) {
+       EXUpdatesControllerRegistry.sharedInstance().controller = EXUpdatesDevLauncherController.sharedInstance()
+     }
+     return true
+diff --git a/node_modules/expo-updates/ios/EXUpdates/ReactDelegateHandler/ExpoUpdatesReactDelegateHandler.swift b/node_modules/expo-updates/ios/EXUpdates/ReactDelegateHandler/ExpoUpdatesReactDelegateHandler.swift
+index cf7087a..70efe07 100644
+--- a/node_modules/expo-updates/ios/EXUpdates/ReactDelegateHandler/ExpoUpdatesReactDelegateHandler.swift
++++ b/node_modules/expo-updates/ios/EXUpdates/ReactDelegateHandler/ExpoUpdatesReactDelegateHandler.swift
+@@ -10,7 +10,7 @@ public class ExpoUpdatesReactDelegateHandler: ExpoReactDelegateHandler, EXUpdate
+   private var rootViewModuleName: String?
+   private var rootViewInitialProperties: [AnyHashable: Any]?
+   private lazy var shouldEnableAutoSetup: Bool = {
+-    if EXAppDefines.APP_DEBUG {
++    if (EXAppDefines.APP_DEBUG && !EXAppDefines.APP_UPDATES_DEBUG) {
+       return false
+     }
+     // if Expo.plist not found or its content is invalid, disable the auto setup

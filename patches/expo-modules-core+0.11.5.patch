@@ -1,0 +1,45 @@
+diff --git a/node_modules/expo-modules-core/ios/EXAppDefines.h b/node_modules/expo-modules-core/ios/EXAppDefines.h
+index 96f34c4..2f6ec8f 100644
+--- a/node_modules/expo-modules-core/ios/EXAppDefines.h
++++ b/node_modules/expo-modules-core/ios/EXAppDefines.h
+@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ @property (class, nonatomic, assign, readonly) BOOL APP_DEBUG NS_SWIFT_NAME(APP_DEBUG);
+ @property (class, nonatomic, assign, readonly) BOOL APP_RCT_DEBUG NS_SWIFT_NAME(APP_RCT_DEBUG);
++@property (class, nonatomic, assign, readonly) BOOL APP_UPDATES_DEBUG NS_SWIFT_NAME(APP_UPDATES_DEBUG);
+ @property (class, nonatomic, assign, readonly) BOOL APP_RCT_DEV NS_SWIFT_NAME(APP_RCT_DEV);
+ @property (class, nonatomic, assign, readonly) BOOL APP_NEW_ARCH_ENABLED NS_SWIFT_NAME(APP_NEW_ARCH_ENABLED);
+ 
+diff --git a/node_modules/expo-modules-core/ios/EXAppDefines.m b/node_modules/expo-modules-core/ios/EXAppDefines.m
+index 1327e49..94ad0cf 100644
+--- a/node_modules/expo-modules-core/ios/EXAppDefines.m
++++ b/node_modules/expo-modules-core/ios/EXAppDefines.m
+@@ -20,6 +20,12 @@ static BOOL _loaded = NO;
+   return [_storage[@"APP_RCT_DEBUG"] boolValue];
+ }
+ 
+++ (BOOL)APP_UPDATES_DEBUG
++{
++  [self throwIfNotLoaded];
++  return [_storage[@"APP_UPDATES_DEBUG"] boolValue];
++}
++
+ + (BOOL)APP_RCT_DEV
+ {
+   [self throwIfNotLoaded];
+diff --git a/node_modules/expo-modules-core/ios/ExpoModulesCore.podspec b/node_modules/expo-modules-core/ios/ExpoModulesCore.podspec
+index 6e198d8..32b7e47 100644
+--- a/node_modules/expo-modules-core/ios/ExpoModulesCore.podspec
++++ b/node_modules/expo-modules-core/ios/ExpoModulesCore.podspec
+@@ -31,7 +31,10 @@ Pod::Spec.new do |s|
+   s.dependency 'React-Core'
+   s.dependency 'ReactCommon/turbomodule/core'
+ 
+-  if !$ExpoUseSources&.include?(package['name']) && ENV['EXPO_USE_SOURCE'].to_i == 0 && File.exist?("#{s.name}.xcframework") && Gem::Version.new(Pod::VERSION) >= Gem::Version.new('1.10.0')
++  #ex_updates_native_debug = ENV['EX_UPDATES_NATIVE_DEBUG'] == '1'
++  ex_updates_native_debug = true
++
++  if !ex_updates_native_debug && !$ExpoUseSources&.include?(package['name']) && ENV['EXPO_USE_SOURCE'].to_i == 0 && File.exist?("#{s.name}.xcframework") && Gem::Version.new(Pod::VERSION) >= Gem::Version.new('1.10.0')
+     s.source_files = '**/*.h'
+     s.vendored_frameworks = "#{s.name}.xcframework"
+   else
