@@ -1,15 +1,14 @@
 diff --git a/node_modules/expo/Expo.podspec b/node_modules/expo/Expo.podspec
-index 0c2b8a7..8e3df64 100644
+index 0c2b8a7..87db680 100644
 --- a/node_modules/expo/Expo.podspec
 +++ b/node_modules/expo/Expo.podspec
-@@ -18,4 +18,13 @@ Pod::Spec.new do |s|
+@@ -18,4 +18,12 @@ Pod::Spec.new do |s|
    s.dependency 'ExpoModulesCore'
  
    s.source_files = 'ios/**/*.{h,m,swift}'
 +
 +
-+  #ex_updates_native_debug = ENV['EX_UPDATES_NATIVE_DEBUG'] == '1'
-+  ex_updates_native_debug = true
++  ex_updates_native_debug = ENV['EX_UPDATES_NATIVE_DEBUG'] == '1'
 +  if ex_updates_native_debug
 +    s.pod_target_xcconfig = {
 +      'OTHER_CFLAGS[config=Debug]' => "$(inherited) -DEX_UPDATES_NATIVE_DEBUG=1" 

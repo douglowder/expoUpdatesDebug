@@ -13,6 +13,9 @@
       }
     },
     "preview": {
+      "env": {
+        "EX_UPDATES_NATIVE_DEBUG": "1"
+      },
       "ios": {
         "buildConfiguration": "Debug",
         "simulator": true
