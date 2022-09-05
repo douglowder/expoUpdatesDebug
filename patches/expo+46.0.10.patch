@@ -32,10 +32,10 @@ index dd1ee3f..b17f703 100644
      @"APP_RCT_DEBUG": @(RCT_DEBUG),
      @"APP_RCT_DEV": @(RCT_DEV),
 diff --git a/node_modules/expo/scripts/autolinking.rb b/node_modules/expo/scripts/autolinking.rb
-index 0617de5..78d67ea 100644
+index 0617de5..9c336d2 100644
 --- a/node_modules/expo/scripts/autolinking.rb
 +++ b/node_modules/expo/scripts/autolinking.rb
-@@ -30,4 +30,19 @@ def expo_patch_react_imports!(installer, options = {})
+@@ -30,4 +30,25 @@ def expo_patch_react_imports!(installer, options = {})
    end
  
    Expo::ReactImportPatcher.new(installer, options).run!
@@ -48,9 +48,15 @@ index 0617de5..78d67ea 100644
 +    .uniq{ |p| p.path }
 +    .push(installer.pods_project)
 +
++  ex_updates_native_debug = ENV['EX_UPDATES_NATIVE_DEBUG'] == '1'
++
 +  projects.each do |project|
 +    project.build_configurations.each do |config|
-+      config.build_settings['OTHER_CFLAGS'] = "$(inherited) -DEX_UPDATES_NATIVE_DEBUG=1"
++      if ex_updates_native_debug
++        config.build_settings['OTHER_CFLAGS'] = "$(inherited) -DEX_UPDATES_NATIVE_DEBUG=1"
++      else
++        config.build_settings['OTHER_CFLAGS'] = "$(inherited)"
++      end
 +    end
 +    project.save()
 +  end
