@@ -8,8 +8,6 @@
 
 #import <React/RCTAppSetupUtils.h>
 
-#import <ExpoModulesCore/EXDefines.h>
-
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
 #import <React/RCTCxxBridgeDelegate.h>
@@ -91,11 +89,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-  if (EXAppDefines.APP_UPDATES_DEBUG) {
-    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-  } else {
-    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-  }
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
