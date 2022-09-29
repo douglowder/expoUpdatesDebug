@@ -16,6 +16,10 @@
       "env": {
         "EX_UPDATES_NATIVE_DEBUG": "1"
       },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      },
       "ios": {
         "buildConfiguration": "Debug",
         "simulator": true
