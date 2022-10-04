@@ -1,13 +1,13 @@
 diff --git a/node_modules/expo-updates/android/build.gradle b/node_modules/expo-updates/android/build.gradle
-index 3b3e5e5..e625386 100644
+index 3b3e5e5..17e0336 100644
 --- a/node_modules/expo-updates/android/build.gradle
 +++ b/node_modules/expo-updates/android/build.gradle
 @@ -6,6 +6,9 @@ apply plugin: 'maven-publish'
  group = 'host.exp.exponent'
  version = '0.14.5'
  
-+def ex_updates_native_debug_env = System.getenv("EX_UPDATES_NATIVE_DEBUG")
-+def ex_updates_native_debug = ex_updates_native_debug_env != null ? String.getValue(ex_updates_native_debug_env) : "0"
++def ex_updates_native_debug_env = System.getenv("EX_UPDATES_NATIVE_DEBUG") ?: "0"
++def ex_updates_native_debug = ex_updates_native_debug_env == "1" ? "true" : "false"
 +
  apply from: "../scripts/create-manifest-android.gradle"
  
@@ -32,7 +32,7 @@ index 3b3e5e5..e625386 100644
      consumerProguardFiles("proguard-rules.pro")
      testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 +
-+    resValue "bool", "expo_updates_native_debug", ex_updates_native_debug
++    buildConfigField("boolean", "EX_UPDATES_NATIVE_DEBUG", ex_updates_native_debug)
 +
      // uncomment below to export the database schema when making changes
      /* javaCompileOptions {
@@ -46,29 +46,14 @@ index 0000000..0d259dd
 +o/classes
 diff --git a/node_modules/expo-updates/android/build/.transforms/3ef58c2aa25b22f5e2f92f6806827142/transformed/classes/classes.dex b/node_modules/expo-updates/android/build/.transforms/3ef58c2aa25b22f5e2f92f6806827142/transformed/classes/classes.dex
 new file mode 100644
-index 0000000..5137fa9
+index 0000000..23523f3
 Binary files /dev/null and b/node_modules/expo-updates/android/build/.transforms/3ef58c2aa25b22f5e2f92f6806827142/transformed/classes/classes.dex differ
-diff --git a/node_modules/expo-updates/android/build/generated/res/resValues/debug/values/gradleResValues.xml b/node_modules/expo-updates/android/build/generated/res/resValues/debug/values/gradleResValues.xml
-new file mode 100644
-index 0000000..922b724
---- /dev/null
-+++ b/node_modules/expo-updates/android/build/generated/res/resValues/debug/values/gradleResValues.xml
-@@ -0,0 +1,9 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<resources>
-+
-+    <!-- Automatically generated file. DO NOT MODIFY -->
-+
-+    <!-- Value from default config. -->
-+    <bool name="expo_updates_native_debug">0</bool>
-+
-+</resources>
 diff --git a/node_modules/expo-updates/android/build/generated/source/buildConfig/debug/expo/modules/updates/BuildConfig.java b/node_modules/expo-updates/android/build/generated/source/buildConfig/debug/expo/modules/updates/BuildConfig.java
 new file mode 100644
-index 0000000..ef48007
+index 0000000..8f0fc9e
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/generated/source/buildConfig/debug/expo/modules/updates/BuildConfig.java
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,12 @@
 +/**
 + * Automatically generated file. DO NOT MODIFY
 + */
@@ -78,6 +63,8 @@ index 0000000..ef48007
 +  public static final boolean DEBUG = Boolean.parseBoolean("true");
 +  public static final String LIBRARY_PACKAGE_NAME = "expo.modules.updates";
 +  public static final String BUILD_TYPE = "debug";
++  // Field from default config.
++  public static final boolean EX_UPDATES_NATIVE_DEBUG = true;
 +}
 diff --git a/node_modules/expo-updates/android/build/generated/source/kapt/debug/expo/modules/updates/db/UpdatesDatabase_Impl.java b/node_modules/expo-updates/android/build/generated/source/kapt/debug/expo/modules/updates/db/UpdatesDatabase_Impl.java
 new file mode 100644
@@ -2509,18 +2496,18 @@ index 0000000..ffb53a4
 \ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/intermediates/compile_library_classes_jar/debug/classes.jar b/node_modules/expo-updates/android/build/intermediates/compile_library_classes_jar/debug/classes.jar
 new file mode 100644
-index 0000000..fc0cee1
+index 0000000..d479709
 Binary files /dev/null and b/node_modules/expo-updates/android/build/intermediates/compile_library_classes_jar/debug/classes.jar differ
 diff --git a/node_modules/expo-updates/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/expo-updates/android/build/intermediates/compile_r_class_jar/debug/R.jar
 new file mode 100644
-index 0000000..56103f4
+index 0000000..80dd5d0
 Binary files /dev/null and b/node_modules/expo-updates/android/build/intermediates/compile_r_class_jar/debug/R.jar differ
 diff --git a/node_modules/expo-updates/android/build/intermediates/compile_symbol_list/debug/R.txt b/node_modules/expo-updates/android/build/intermediates/compile_symbol_list/debug/R.txt
 new file mode 100644
-index 0000000..b7d9633
+index 0000000..2db1966
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/intermediates/compile_symbol_list/debug/R.txt
-@@ -0,0 +1,1967 @@
+@@ -0,0 +1,1966 @@
 +int anim abc_fade_in 0x0
 +int anim abc_fade_out 0x0
 +int anim abc_grow_fade_in_from_bottom 0x0
@@ -2887,7 +2874,6 @@ index 0000000..b7d9633
 +int bool abc_action_bar_embed_tabs 0x0
 +int bool abc_allow_stacked_button_bar 0x0
 +int bool abc_config_actionMenuItemAllCaps 0x0
-+int bool expo_updates_native_debug 0x0
 +int color abc_background_cache_hint_selector_material_dark 0x0
 +int color abc_background_cache_hint_selector_material_light 0x0
 +int color abc_btn_colored_borderless_text_material 0x0
@@ -4517,34 +4503,23 @@ index 0000000..402d330
 \ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties b/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
 new file mode 100644
-index 0000000..06005e5
+index 0000000..5eca6f7
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
 @@ -0,0 +1 @@
-+#Mon Oct 03 14:11:41 PDT 2022
-diff --git a/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/merged.dir/values/values.xml b/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/merged.dir/values/values.xml
-new file mode 100644
-index 0000000..f5247c5
---- /dev/null
-+++ b/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/merged.dir/values/values.xml
-@@ -0,0 +1,4 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<resources>
-+    <bool name="expo_updates_native_debug">0</bool>
-+</resources>
-\ No newline at end of file
++#Mon Oct 03 18:06:39 PDT 2022
 diff --git a/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/merger.xml b/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/merger.xml
 new file mode 100644
-index 0000000..2126660
+index 0000000..a176ba7
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/intermediates/incremental/packageDebugResources/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/res"/><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/rs/debug"/><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/res"/><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/rs/debug"/><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/resValues/debug"><file path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/resValues/debug/values/gradleResValues.xml" qualifiers=""><bool name="expo_updates_native_debug">0</bool></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/debug/res"/></dataSet><mergedItems/></merger>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/res"/><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/rs/debug"/><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/res"/><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/rs/debug"/><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/debug/res"/></dataSet><mergedItems/></merger>
 \ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/intermediates/javac/debug/classes/expo/modules/updates/BuildConfig.class b/node_modules/expo-updates/android/build/intermediates/javac/debug/classes/expo/modules/updates/BuildConfig.class
 new file mode 100644
-index 0000000..7e83a35
+index 0000000..ae7206d
 Binary files /dev/null and b/node_modules/expo-updates/android/build/intermediates/javac/debug/classes/expo/modules/updates/BuildConfig.class differ
 diff --git a/node_modules/expo-updates/android/build/intermediates/javac/debug/classes/expo/modules/updates/db/UpdatesDatabase_Impl$1.class b/node_modules/expo-updates/android/build/intermediates/javac/debug/classes/expo/modules/updates/db/UpdatesDatabase_Impl$1.class
 new file mode 100644
@@ -4660,13 +4635,12 @@ index 0000000..cdf5805
 Binary files /dev/null and b/node_modules/expo-updates/android/build/intermediates/library_java_res/debug/res.jar differ
 diff --git a/node_modules/expo-updates/android/build/intermediates/local_only_symbol_list/debug/R-def.txt b/node_modules/expo-updates/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
 new file mode 100644
-index 0000000..df97a1d
+index 0000000..78ac5b8
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
-@@ -0,0 +1,3 @@
+@@ -0,0 +1,2 @@
 +R_DEF: Internal format may change without notice
 +local
-+bool expo_updates_native_debug
 diff --git a/node_modules/expo-updates/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/expo-updates/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
 new file mode 100644
 index 0000000..0959978
@@ -4739,27 +4713,16 @@ index 0000000..8acaf5f
 +  "elementType": "File"
 +}
 \ No newline at end of file
-diff --git a/node_modules/expo-updates/android/build/intermediates/packaged_res/debug/values/values.xml b/node_modules/expo-updates/android/build/intermediates/packaged_res/debug/values/values.xml
-new file mode 100644
-index 0000000..f5247c5
---- /dev/null
-+++ b/node_modules/expo-updates/android/build/intermediates/packaged_res/debug/values/values.xml
-@@ -0,0 +1,4 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<resources>
-+    <bool name="expo_updates_native_debug">0</bool>
-+</resources>
-\ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar b/node_modules/expo-updates/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar
 new file mode 100644
-index 0000000..57bfc9d
+index 0000000..2be69b6
 Binary files /dev/null and b/node_modules/expo-updates/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar differ
 diff --git a/node_modules/expo-updates/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/expo-updates/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
 new file mode 100644
-index 0000000..9a12de1
+index 0000000..158f7b1
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
-@@ -0,0 +1,1460 @@
+@@ -0,0 +1,1459 @@
 +expo.modules.updates
 +anim abc_fade_in
 +anim abc_fade_out
@@ -5127,7 +5090,6 @@ index 0000000..9a12de1
 +bool abc_action_bar_embed_tabs
 +bool abc_allow_stacked_button_bar
 +bool abc_config_actionMenuItemAllCaps
-+bool expo_updates_native_debug
 +color abc_background_cache_hint_selector_material_dark
 +color abc_background_cache_hint_selector_material_light
 +color abc_btn_colored_borderless_text_material
@@ -6222,11 +6184,11 @@ index 0000000..9a12de1
 +xml rn_dev_preferences
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/build-history.bin b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/build-history.bin
 new file mode 100644
-index 0000000..afb1f57
+index 0000000..1521778
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/build-history.bin differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab
 new file mode 100644
-index 0000000..d1a9264
+index 0000000..50372ee
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream
 new file mode 100644
@@ -6250,7 +6212,7 @@ index 0000000..1aad6d1
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at
 new file mode 100644
-index 0000000..3663b78
+index 0000000..3ba3795
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.s b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.s
 new file mode 100644
@@ -6270,27 +6232,27 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab
 new file mode 100644
-index 0000000..bbdbd72
+index 0000000..b446b52
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.keystream
 new file mode 100644
-index 0000000..724b677
+index 0000000..b32a655
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.keystream differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len
 new file mode 100644
-index 0000000..d001a24
+index 0000000..118f17f
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.len
 new file mode 100644
-index 0000000..e3ff27e
+index 0000000..4e53443
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.values.at
 new file mode 100644
-index 0000000..066b451
+index 0000000..0c8b00d
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i
 new file mode 100644
-index 0000000..7c2583a
+index 0000000..19b0a31
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i.len
 new file mode 100644
@@ -6298,27 +6260,27 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab
 new file mode 100644
-index 0000000..79b1bd3
+index 0000000..f73cd29
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream
 new file mode 100644
-index 0000000..724b677
+index 0000000..b32a655
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len
 new file mode 100644
-index 0000000..d001a24
+index 0000000..118f17f
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len
 new file mode 100644
-index 0000000..e3ff27e
+index 0000000..4e53443
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at
 new file mode 100644
-index 0000000..089de39
+index 0000000..a0993cb
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i
 new file mode 100644
-index 0000000..7c2583a
+index 0000000..19b0a31
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len
 new file mode 100644
@@ -6382,7 +6344,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/inline-functions.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab
 new file mode 100644
-index 0000000..3632f21
+index 0000000..0cb53cc
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream
 new file mode 100644
@@ -6402,7 +6364,7 @@ index 0000000..def85c6
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at
 new file mode 100644
-index 0000000..1b1167c
+index 0000000..735f821
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i
 new file mode 100644
@@ -6412,6 +6374,34 @@ diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/c
 new file mode 100644
 index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len differ
+diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab
+new file mode 100644
+index 0000000..0dbb9fb
+Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab differ
+diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream
+new file mode 100644
+index 0000000..d6d39b2
+Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream differ
+diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream.len
+new file mode 100644
+index 0000000..71989fa
+Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream.len differ
+diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.len
+new file mode 100644
+index 0000000..2a17e6e
+Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.len differ
+diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.values.at
+new file mode 100644
+index 0000000..94cc44c
+Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.values.at differ
+diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i
+new file mode 100644
+index 0000000..e7e01a9
+Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i differ
+diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/package-parts.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/package-parts.tab
 new file mode 100644
 index 0000000..abb6952
@@ -6442,7 +6432,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/package-parts.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab
 new file mode 100644
-index 0000000..61e9a6f
+index 0000000..cfd8c1a
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream
 new file mode 100644
@@ -6462,7 +6452,7 @@ index 0000000..6483509
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at
 new file mode 100644
-index 0000000..7a23f92
+index 0000000..4a87304
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.s b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.s
 new file mode 100644
@@ -6482,31 +6472,31 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab
 new file mode 100644
-index 0000000..73892a6
+index 0000000..0ba7a4a
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream
 new file mode 100644
-index 0000000..9ee4079
+index 0000000..da1aa36
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream
 @@ -0,0 +1 @@
-+à/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesConfiguration.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesController.ktê/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesDevLauncherController.ktÑ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesInterface.ktÅ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesModule.ktÇ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesPackage.ktÇ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesService.ktÄ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesUtils.ktê/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/codesigning/CertificateChain.ktî/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/codesigning/CodeSigningAlgorithm.ktò/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/codesigning/CodeSigningConfiguration.ktì/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/codesigning/SignatureHeaderInfo.ktÄ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/BuildData.ktÅ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/Converters.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/DatabaseHolder.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/DatabaseIntegrityCheck.kt}/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/Reaper.ktÜ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/UpdatesDatabase.ktÉ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/dao/AssetDao.ktÜ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/dao/JSONDataDao.ktÑ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/dao/UpdateDao.ktâ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/entity/AssetEntity.ktå/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/entity/JSONDataEntity.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/entity/UpdateAssetEntity.ktä/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/entity/UpdateEntity.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/enums/HashType.ktâ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/enums/UpdateStatus.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/errorrecovery/ErrorRecovery.któ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/errorrecovery/ErrorRecoveryDelegate.ktñ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/errorrecovery/ErrorRecoveryHandler.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/launcher/DatabaseLauncher.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/launcher/Launcher.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/launcher/NoDatabaseLauncher.ktâ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/EmbeddedLoader.ktâ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/FileDownloader.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/LegacySignatureUtils.ktÅ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/Loader.ktÜ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/LoaderFiles.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/LoaderTask.ktá/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/RemoteLoader.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/BareUpdateManifest.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/EmbeddedManifest.ktë/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/LegacyUpdateManifest.ktå/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/ManifestFactory.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/ManifestHeaderData.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/ManifestMetadata.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/ManifestResponse.kté/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/NewUpdateManifest.ktã/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/UpdateManifest.ktõ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LauncherSelectionPolicy.kt¶/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LauncherSelectionPolicyFilterAware.ktß/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LauncherSelectionPolicySingleUpdate.ktô/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LoaderSelectionPolicy.kt§/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LoaderSelectionPolicyFilterAware.ktô/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/ReaperSelectionPolicy.kt™/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/ReaperSelectionPolicyDevelopmentClient.kt§/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/ReaperSelectionPolicyFilterAware.ktï/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/SelectionPolicies.ktì/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/SelectionPolicy.ktö/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/SelectionPolicyFactory.kt                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
++à/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesConfiguration.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesController.ktê/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesDevLauncherController.ktÑ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesInterface.ktÅ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesModule.ktÇ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesPackage.ktÇ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesService.ktÄ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesUtils.ktê/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/codesigning/CertificateChain.ktî/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/codesigning/CodeSigningAlgorithm.ktò/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/codesigning/CodeSigningConfiguration.ktì/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/codesigning/SignatureHeaderInfo.ktÄ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/BuildData.ktÅ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/Converters.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/DatabaseHolder.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/DatabaseIntegrityCheck.kt}/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/Reaper.ktÜ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/UpdatesDatabase.ktÉ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/dao/AssetDao.ktÜ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/dao/JSONDataDao.ktÑ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/dao/UpdateDao.ktâ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/entity/AssetEntity.ktå/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/entity/JSONDataEntity.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/entity/UpdateAssetEntity.ktä/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/entity/UpdateEntity.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/enums/HashType.ktâ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/db/enums/UpdateStatus.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/errorrecovery/ErrorRecovery.któ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/errorrecovery/ErrorRecoveryDelegate.ktñ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/errorrecovery/ErrorRecoveryHandler.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/launcher/DatabaseLauncher.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/launcher/Launcher.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/launcher/NoDatabaseLauncher.ktâ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/EmbeddedLoader.ktâ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/FileDownloader.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/LegacySignatureUtils.ktÅ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/Loader.ktÜ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/LoaderFiles.ktÖ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/LoaderTask.ktá/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/loader/RemoteLoader.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/BareUpdateManifest.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/EmbeddedManifest.ktë/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/LegacyUpdateManifest.ktå/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/ManifestFactory.ktè/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/ManifestHeaderData.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/ManifestMetadata.ktç/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/ManifestResponse.kté/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/NewUpdateManifest.ktã/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/manifest/UpdateManifest.ktõ/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LauncherSelectionPolicy.kt¶/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LauncherSelectionPolicyFilterAware.ktß/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LauncherSelectionPolicySingleUpdate.ktô/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LoaderSelectionPolicy.kt§/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/LoaderSelectionPolicyFilterAware.ktô/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/ReaperSelectionPolicy.kt™/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/ReaperSelectionPolicyDevelopmentClient.kt§/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/ReaperSelectionPolicyFilterAware.ktï/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/SelectionPolicies.ktì/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/SelectionPolicy.ktö/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/java/expo/modules/updates/selectionpolicy/SelectionPolicyFactory.ktú/Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/build/generated/source/buildConfig/debug/expo/modules/updates/BuildConfig.java                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 \ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len
 new file mode 100644
-index 0000000..490548d
+index 0000000..0354686
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.len
 new file mode 100644
-index 0000000..8f5a4cf
+index 0000000..7bc863f
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at
 new file mode 100644
-index 0000000..19090b4
+index 0000000..afcd837
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i
 new file mode 100644
-index 0000000..933cd60
+index 0000000..ca89ad4
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len
 new file mode 100644
@@ -6514,7 +6504,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab
 new file mode 100644
-index 0000000..8aba4e2
+index 0000000..ca2cfe1
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream
 new file mode 100644
@@ -6530,7 +6520,7 @@ index 0000000..003bc0e
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at
 new file mode 100644
-index 0000000..99fee90
+index 0000000..1016eba
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i
 new file mode 100644
@@ -6542,7 +6532,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab
 new file mode 100644
-index 0000000..7a147e7
+index 0000000..ec3ce6d
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream
 new file mode 100644
@@ -6558,7 +6548,7 @@ index 0000000..213dab4
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at
 new file mode 100644
-index 0000000..57bca65
+index 0000000..20b895e
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i
 new file mode 100644
@@ -6570,16 +6560,16 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/counters.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/counters.tab
 new file mode 100644
-index 0000000..32246ae
+index 0000000..17c1b0d
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/counters.tab
 @@ -0,0 +1,2 @@
-+60
++62
 +0
 \ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab
 new file mode 100644
-index 0000000..26d100e
+index 0000000..8f76558
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream
 new file mode 100644
@@ -6599,7 +6589,7 @@ index 0000000..8f5a4cf
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at
 new file mode 100644
-index 0000000..c8c0888
+index 0000000..78c2df7
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i
 new file mode 100644
@@ -6611,27 +6601,27 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab
 new file mode 100644
-index 0000000..400b42f
+index 0000000..0c736b3
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream
 new file mode 100644
-index 0000000..4e864a9
+index 0000000..78c8a48
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len
 new file mode 100644
-index 0000000..851b0a9
+index 0000000..1c69ee4
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.len
 new file mode 100644
-index 0000000..8f5a4cf
+index 0000000..f6d81fe
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at
 new file mode 100644
-index 0000000..7a54f54
+index 0000000..43050de
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i
 new file mode 100644
-index 0000000..750a472
+index 0000000..9a32f1f
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len
 new file mode 100644
@@ -6639,39 +6629,39 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab
 new file mode 100644
-index 0000000..aca323a
+index 0000000..45ed7e9
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream
 new file mode 100644
-index 0000000..6075d68
+index 0000000..b1cb6bf
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream.len
 new file mode 100644
-index 0000000..6149df6
+index 0000000..4209df2
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.len
 new file mode 100644
-index 0000000..b4a8b08
+index 0000000..85ff0ca
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values
 new file mode 100644
-index 0000000..3b51a81
+index 0000000..7da85bf
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.at b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.at
 new file mode 100644
-index 0000000..5e3059f
+index 0000000..2dda9ad
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.s b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.s
 new file mode 100644
-index 0000000..2b8ce60
+index 0000000..2f5cca2
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.s
 @@ -0,0 +1 @@
-+ÎÅÂS
++ÏÅ≈S
 \ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i
 new file mode 100644
-index 0000000..3b58521
+index 0000000..225b74b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i.len b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i.len
 new file mode 100644
@@ -6679,15 +6669,15 @@ index 0000000..5315f7a
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/last-build.bin b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/last-build.bin
 new file mode 100644
-index 0000000..4223ef7
+index 0000000..355e6b0
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/compileDebugKotlin/last-build.bin differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/build-history.bin b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/build-history.bin
 new file mode 100644
-index 0000000..2902661
+index 0000000..3b5d054
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/build-history.bin differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab
 new file mode 100644
-index 0000000..44f7f48
+index 0000000..ec3286e
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream
 new file mode 100644
@@ -6711,7 +6701,7 @@ index 0000000..858e955
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab.values differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at
 new file mode 100644
-index 0000000..a192018
+index 0000000..c2706ef
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.s b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.s
 new file mode 100644
@@ -6731,7 +6721,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/inputs/source-to-output.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab
 new file mode 100644
-index 0000000..f9e0d8e
+index 0000000..25ce03b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.keystream
 new file mode 100644
@@ -6747,7 +6737,7 @@ index 0000000..e3ff27e
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.values.at
 new file mode 100644
-index 0000000..066b451
+index 0000000..62d74e8
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i
 new file mode 100644
@@ -6759,7 +6749,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-attributes.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab
 new file mode 100644
-index 0000000..cc82f7c
+index 0000000..b9fb92c
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream
 new file mode 100644
@@ -6775,7 +6765,7 @@ index 0000000..e3ff27e
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at
 new file mode 100644
-index 0000000..68adc68
+index 0000000..da92f50
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i
 new file mode 100644
@@ -6843,7 +6833,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/inline-functions.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab
 new file mode 100644
-index 0000000..a2532a0
+index 0000000..94ef4d7
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream
 new file mode 100644
@@ -6859,7 +6849,7 @@ index 0000000..a5fbec6
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at
 new file mode 100644
-index 0000000..316c548
+index 0000000..6aa2edb
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i
 new file mode 100644
@@ -6899,7 +6889,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/package-parts.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab
 new file mode 100644
-index 0000000..861e31c
+index 0000000..54598a1
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream
 new file mode 100644
@@ -6919,7 +6909,7 @@ index 0000000..48d8b58
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at
 new file mode 100644
-index 0000000..dc39108
+index 0000000..1eab158
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.s b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.s
 new file mode 100644
@@ -6939,7 +6929,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/proto.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab
 new file mode 100644
-index 0000000..fd6d2d2
+index 0000000..bd6397f
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream
 new file mode 100644
@@ -6959,7 +6949,7 @@ index 0000000..8f5a4cf
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at
 new file mode 100644
-index 0000000..d6d9336
+index 0000000..41eb22f
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i
 new file mode 100644
@@ -6971,7 +6961,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab
 new file mode 100644
-index 0000000..501e5d6
+index 0000000..881eab8
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream
 new file mode 100644
@@ -6987,7 +6977,7 @@ index 0000000..003bc0e
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at
 new file mode 100644
-index 0000000..aeadb75
+index 0000000..ca9fa79
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i
 new file mode 100644
@@ -6999,7 +6989,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab
 new file mode 100644
-index 0000000..c4cf125
+index 0000000..44f28cf
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream
 new file mode 100644
@@ -7015,7 +7005,7 @@ index 0000000..213dab4
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at
 new file mode 100644
-index 0000000..4e3b044
+index 0000000..5095395
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i
 new file mode 100644
@@ -7027,16 +7017,16 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/counters.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/counters.tab
 new file mode 100644
-index 0000000..32246ae
+index 0000000..9faea5e
 --- /dev/null
 +++ b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/counters.tab
 @@ -0,0 +1,2 @@
-+60
++61
 +0
 \ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab
 new file mode 100644
-index 0000000..26d100e
+index 0000000..64975be
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream
 new file mode 100644
@@ -7056,7 +7046,7 @@ index 0000000..8f5a4cf
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at
 new file mode 100644
-index 0000000..c8c0888
+index 0000000..b146f3a
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab_i
 new file mode 100644
@@ -7068,27 +7058,27 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/file-to-id.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab
 new file mode 100644
-index 0000000..400b42f
+index 0000000..1dfd44b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream
 new file mode 100644
-index 0000000..4e864a9
+index 0000000..2c31fb9
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len
 new file mode 100644
-index 0000000..851b0a9
+index 0000000..e4e5cbd
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.len b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.len
 new file mode 100644
-index 0000000..8f5a4cf
+index 0000000..7bc863f
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at
 new file mode 100644
-index 0000000..7a54f54
+index 0000000..f849535
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab_i
 new file mode 100644
-index 0000000..750a472
+index 0000000..e25993b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab_i differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len
 new file mode 100644
@@ -7096,7 +7086,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab
 new file mode 100644
-index 0000000..8e86255
+index 0000000..228ce2a
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab.keystream b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab.keystream
 new file mode 100644
@@ -7112,7 +7102,7 @@ index 0000000..333abe6
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab.values.at b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab.values.at
 new file mode 100644
-index 0000000..d98c392
+index 0000000..1150e9b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab.values.at differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab_i b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab_i
 new file mode 100644
@@ -7124,7 +7114,7 @@ index 0000000..131e265
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/caches-jvm/lookups/lookups.tab_i.len differ
 diff --git a/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/last-build.bin b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/last-build.bin
 new file mode 100644
-index 0000000..fdd9b96
+index 0000000..7959c1b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/kotlin/kaptGenerateStubsDebugKotlin/last-build.bin differ
 diff --git a/node_modules/expo-updates/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/expo-updates/android/build/outputs/logs/manifest-merger-debug-report.txt
 new file mode 100644
@@ -7163,7 +7153,7 @@ index 0000000..34fdb8e
 +		INJECTED from /Users/dlowder/iosProjects/expoUpdatesDebug/node_modules/expo-updates/android/src/main/AndroidManifest.xml
 diff --git a/node_modules/expo-updates/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/expo-updates/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
 new file mode 100644
-index 0000000..84764e6
+index 0000000..b952481
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/ap-classpath-entries.bin b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/ap-classpath-entries.bin
 new file mode 100644
@@ -7171,7 +7161,7 @@ index 0000000..55eed3b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/ap-classpath-entries.bin differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/apt-cache.bin b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/apt-cache.bin
 new file mode 100644
-index 0000000..b320776
+index 0000000..27fe68b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/apt-cache.bin differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/classpath-entries.bin b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/classpath-entries.bin
 new file mode 100644
@@ -7179,11 +7169,11 @@ index 0000000..cb6216f
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/classpath-entries.bin differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/classpath-structure.bin b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/classpath-structure.bin
 new file mode 100644
-index 0000000..542a82d
+index 0000000..9a14712
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/classpath-structure.bin differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/java-cache.bin b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/java-cache.bin
 new file mode 100644
-index 0000000..c1f7627
+index 0000000..5d2d823
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kapt3/incApCache/debug/java-cache.bin differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kapt3/incrementalData/debug/META-INF/expo-updates_debug.kotlin_module b/node_modules/expo-updates/android/build/tmp/kapt3/incrementalData/debug/META-INF/expo-updates_debug.kotlin_module
 new file mode 100644
@@ -8393,7 +8383,7 @@ index 0000000..3a21300
 \ No newline at end of file
 diff --git a/node_modules/expo-updates/android/build/tmp/kapt3/stubs/debug/expo/modules/updates/UpdatesPackage.kapt_metadata b/node_modules/expo-updates/android/build/tmp/kapt3/stubs/debug/expo/modules/updates/UpdatesPackage.kapt_metadata
 new file mode 100644
-index 0000000..c8f54e1
+index 0000000..f992ad6
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kapt3/stubs/debug/expo/modules/updates/UpdatesPackage.kapt_metadata differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kapt3/stubs/debug/expo/modules/updates/UpdatesService.java b/node_modules/expo-updates/android/build/tmp/kapt3/stubs/debug/expo/modules/updates/UpdatesService.java
 new file mode 100644
@@ -12901,15 +12891,15 @@ index 0000000..2cfa539
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesModule.class differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage$Companion.class b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage$Companion.class
 new file mode 100644
-index 0000000..adfcef1
+index 0000000..16f1c58
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage$Companion.class differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage$createReactNativeHostHandlers$handler$1.class b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage$createReactNativeHostHandlers$handler$1.class
 new file mode 100644
-index 0000000..00ebd1e
+index 0000000..02e7c5b
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage$createReactNativeHostHandlers$handler$1.class differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage.class b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage.class
 new file mode 100644
-index 0000000..9a30703
+index 0000000..248bbd7
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesPackage.class differ
 diff --git a/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesService$Companion.class b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/UpdatesService$Companion.class
 new file mode 100644
@@ -13488,16 +13478,15 @@ new file mode 100644
 index 0000000..eab1620
 Binary files /dev/null and b/node_modules/expo-updates/android/build/tmp/kotlin-classes/debug/expo/modules/updates/selectionpolicy/SelectionPolicyFactory.class differ
 diff --git a/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesPackage.kt b/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesPackage.kt
-index df82184..6ba5b99 100644
+index df82184..76c099a 100644
 --- a/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesPackage.kt
 +++ b/node_modules/expo-updates/android/src/main/java/expo/modules/updates/UpdatesPackage.kt
-@@ -25,19 +25,22 @@ class UpdatesPackage : Package {
+@@ -25,19 +25,21 @@ class UpdatesPackage : Package {
    }
  
    override fun createReactNativeHostHandlers(context: Context): List<ReactNativeHostHandler> {
-+    val resources = context.resources
-+    val useNativeDebug = resources.getBoolean(R.bool.expo_updates_native_debug)
-+
++    val useNativeDebug = BuildConfig.EX_UPDATES_NATIVE_DEBUG;
++    Log.w("expo-updates-package", "EX_UPDATES_NATIVE_DEBUG = $useNativeDebug")
      val handler: ReactNativeHostHandler = object : ReactNativeHostHandler {
        private var mShouldAutoSetup: Boolean? = null
  
@@ -13517,7 +13506,7 @@ index df82184..6ba5b99 100644
            UpdatesController.initialize(context)
          }
        }
-@@ -45,7 +48,7 @@ class UpdatesPackage : Package {
+@@ -45,7 +47,7 @@ class UpdatesPackage : Package {
        override fun onDidCreateReactInstanceManager(reactInstanceManager: ReactInstanceManager, useDeveloperSupport: Boolean) {
          // WHEN_VERSIONING_REMOVE_FROM_HERE
          // This code path breaks versioning and is not necessary for Expo Go.
