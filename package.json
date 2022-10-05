@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "postinstall": "patch-package",
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -12,6 +13,8 @@
     "expo": "~46.0.13",
     "expo-splash-screen": "~0.16.2",
     "expo-status-bar": "~1.4.0",
+    "expo-updates": "~0.14.6",
+    "patch-package": "^6.4.7",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-native": "0.69.6",
